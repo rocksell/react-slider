@@ -350,6 +350,16 @@
       return obj;
     },
 
+    _buildPercentilerStyle: function (from, to) {
+      var obj = {
+        position: 'absolute',
+        willChange: from + '' + to
+      };
+      obj[this._posMinKey()] = from + '%';
+      obj[this._posMaxKey()] = to +'%';
+      return obj;
+    },
+
     _getClosestIndex: function (pixelOffset) {
       var minDist = Number.MAX_VALUE;
       var closestIndex = -1;
@@ -802,6 +812,26 @@
       );
     },
 
+    _renderPercentile: function (side, from, to) {
+      const invertedClass = this.props.invertedPercentile ? 'inverted' : '';
+      return (
+        React.createElement('div', {
+          key: 'percentile' + side,
+          ref: function (r) {
+            self['percentile-' + side] = r;
+          },
+          className: 'percentile-bar percentile-bar' + '-' + side + ' ' + invertedClass,
+          style: this._buildPercentilerStyle(from, to)
+        })
+      );
+    },
+    _renderPercentiles: function () {
+      if (!this.props.minPercentile) return null;
+      return [this._renderPercentile('min', 0, 100 - this.props.minPercentile),
+        this._renderPercentile('middle', this.props.minPercentile, 100 - this.props.maxPercentile),
+        this._renderPercentile('max', this.props.maxPercentile, 0)];
+    },
+
     _renderBars: function (offset) {
       var bars = [];
       var lastIndex = offset.length - 1;
@@ -861,6 +891,7 @@
       }
 
       var bars = props.withBars ? this._renderBars(offset) : null;
+      var percentiles = this._renderPercentiles();
       var handles = this._renderHandles(offset);
 
       return (
@@ -874,6 +905,7 @@
             onClick: this._onSliderClick
           },
           bars,
+          percentiles,
           handles
         )
       );
