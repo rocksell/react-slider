@@ -813,7 +813,7 @@
     },
 
     _renderPercentile: function (side, from, to) {
-      const invertedClass = this.props.invertedPercentile ? 'inverted' : '';
+      var invertedClass = this.props.invertedPercentile ? 'inverted' : '';
       return (
         React.createElement('div', {
           key: 'percentile' + side,
@@ -826,7 +826,7 @@
       );
     },
     _renderPercentiles: function () {
-      if (!this.props.minPercentile) return null;
+      if (this.props.minPercentile === undefined) return null;
       return [this._renderPercentile('min', 0, 100 - this.props.minPercentile),
         this._renderPercentile('middle', this.props.minPercentile, 100 - this.props.maxPercentile),
         this._renderPercentile('max', this.props.maxPercentile, 0)];
